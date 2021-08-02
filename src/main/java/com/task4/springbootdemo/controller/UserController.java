@@ -35,6 +35,10 @@ public class UserController {
         return "login-error";
     }
 
+    @RequestMapping(value = "/creation-error")
+    public String creationError() {
+        return "creation-error";
+    }
 
     @GetMapping("/users")
     public String findAll(Model model) {
@@ -54,6 +58,12 @@ public class UserController {
         user.setRegistrationDate(date.toString());
         user.setLastLoginDate(date.toString());
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        List<User> users = userService.findAll();
+        for(User usr : users) {
+            if(usr.getName().equals(user.getName())) {
+                return "redirect:/creation-error";
+            }
+        }
         userService.saveUser(user);
         currentUser = user;
         return "redirect:/users";
