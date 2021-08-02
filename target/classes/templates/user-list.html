@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Users</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8"
+            crossorigin="anonymous"></script>
+</head>
+<body>
+<div th:switch="${users}">
+    <h2 th:case="null">No users found!</h2>
+    <div th:case="*">
+        <div class="jumbotron jumbotron-fluid">
+            <div class="container">
+                <h1 class="display-4">All users</h1>
+            </div>
+        </div>
+
+        <form method="post" action="#" th:action="@{/users-delete-selected}" th:object="${ids}">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th align="justify"><input type="button" value="Select all/Remove selection"
+                                               onclick="check(this.form.isChecked)">
+                    </th>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>E-mail</th>
+                    <th>Registration Date</th>
+                    <th>Last Login Date</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <script type="text/javascript">
+                    function check(field) {
+                        for (let i = 0; i < field.length; i++) {
+                            if (!field[i].checked) {
+                                for (let j = 0; j < field.length; j++) {
+                                    field[j].checked = true;
+                                }
+                                return;
+                            }
+                        }
+
+                        for (let i = 0; i < field.length; i++) {
+                            field[i].checked = false;
+                        }
+                    }
+                </script>
+
+                <tr th:each="user : ${users}">
+                    <td align="center"><input type="checkbox" name="isChecked" value="${user.id}"></td>
+                    <td th:text="${user.id}"></td>
+                    <td th:text="${user.name}"></td>
+                    <td th:text="${user.email}"></td>
+                    <td th:text="${user.registrationDate}"></td>
+                    <td th:text="${user.lastLoginDate}"></td>
+                    <div th:switch="${user.isBlocked}">
+                        <td th:case="true">Blocked</td>
+                        <td th:case="false">Alive</td>
+                    </div>
+
+                    <td><p><a th:href="@{user-delete/{id}(id=${user.id})}" class="text-dark">Delete</a></p></td>
+                    <td><p><a th:href="@{user-block/{id}(id=${user.id})}" class="text-dark">Block</a></p></td>
+                    <td><p><a th:href="@{user-unblock/{id}(id=${user.id})}" class="text-dark">Unblock</a></p></td>
+
+                </tr>
+                </tbody>
+            </table>
+
+            <script type="text/javascript">
+                function getChecked(field) {
+                    let values = "";
+                    for (let i = 0; i < field.length; i++) {
+                        if (field[i].checked) {
+                            values += ":" + field[i].value;
+                        }
+                    }
+                    console.log(values);
+                    return values;
+                }
+            </script>
+        </form>
+    </div>
+
+</div>
+</body>
+</html>
