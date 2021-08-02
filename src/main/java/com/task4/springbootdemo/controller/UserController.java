@@ -25,7 +25,7 @@ public class UserController {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    @RequestMapping(value = "/home-page")
+    @RequestMapping(value = {"/", "/home-page"})
     public String homePage() {
         return "home-page";
     }
@@ -68,10 +68,6 @@ public class UserController {
     public String logIn(User user) {
         List<User> users = userService.findAll();
 
-        for (User u : users) {
-            System.out.println(u.toString());
-        }
-
         for (User currentUser : users) {
             if (currentUser.getName().equals(user.getName())
                     && bCryptPasswordEncoder.matches(user.getPassword(),currentUser.getPassword())
@@ -81,7 +77,7 @@ public class UserController {
                     userService.findById(currentUser.getId()).get().setLastLoginDate(date.toString());
                     userService.saveUser(userService.findById(currentUser.getId()).get());
                 }
-                currentUser = user;
+                UserController.currentUser = currentUser;
                 return "redirect:/users";
             }
         }
@@ -94,14 +90,6 @@ public class UserController {
         if (currentUser.getId().equals(id)) {
             currentUser = null;
             return "redirect:/home-page";
-        }
-        return "redirect:/users";
-    }
-
-    @RequestMapping("/users-delete-selected/{ids}")
-    public String deleteSelected(@PathVariable("ids") Long[] ids) {
-        for(Long id : ids) {
-            userService.deleteById(id);
         }
         return "redirect:/users";
     }
